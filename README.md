@@ -1,2 +1,8 @@
-# oitc
-This is the official GitHub repo for the game One In The Chamber
+# One In The Chamber
+
+# Working On
+- Inventory System
+- Gun System
+- Game Mechanics
+- Maps
+- Levels
