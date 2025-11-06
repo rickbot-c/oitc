@@ -669,5 +669,4 @@ while running:
     # update the full display and cap the frame rate (from settings)
     pygame.display.flip()
     clock.tick(SETTINGS.get('fps_limit', 60))
-
-
+    
