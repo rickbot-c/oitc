@@ -200,7 +200,8 @@ class Player:
             w, h = player_sprite.get_size()
             display.blit(player_sprite, (int(self.x - w/2), int(self.y - h/2)))
         else:
-            pygame.draw.circle(display, white, (int(self.x), int(self.y)), 6)
+            # slightly larger fallback marker so the player is visible
+            pygame.draw.circle(display, white, (int(self.x), int(self.y)), 10)
         # draw a small health bar above the player
         bar_w = 36
         bar_h = 6
@@ -621,15 +622,17 @@ while running:
             pygame.draw.circle(display, q['color'], (int(q['x']), int(q['y'])), 2)
 
         # draw player and HUD
-            player.draw()
-            # draw gun that follows cursor (rotated to point at mouse)
-            if 'gun_sprite' in globals() and gun_sprite:
-                mx, my = pygame.mouse.get_pos()
-                ang = math.degrees(math.atan2(my - player.y, mx - player.x))
-                # rotate gun so that 0deg points to the right
-                rot = pygame.transform.rotate(gun_sprite, -ang)
-                rrect = rot.get_rect(center=(int(player.x), int(player.y)))
-                display.blit(rot, rrect.topleft)
+        player.draw()
+        # draw a bright marker on top of the player to ensure visibility
+        pygame.draw.circle(display, (255,220,80), (int(player.x), int(player.y)), 4)
+        # draw gun that follows cursor (rotated to point at mouse)
+        if 'gun_sprite' in globals() and gun_sprite:
+            mx, my = pygame.mouse.get_pos()
+            ang = math.degrees(math.atan2(my - player.y, mx - player.x))
+            # rotate gun so that 0deg points to the right
+            rot = pygame.transform.rotate(gun_sprite, -ang)
+            rrect = rot.get_rect(center=(int(player.x), int(player.y)))
+            display.blit(rot, rrect.topleft)
         # show ammo, reload status and score
         now = time.time()
         if now < reload_cooldown:
@@ -665,6 +668,13 @@ while running:
     if scene == 'game':
         wave_surf = font.render(f"Wave: {wave}", True, accent)
         display.blit(wave_surf, (window_res[0]-120, 5))
+
+    # debug overlay: scene and player coords (helpful when player seems invisible)
+    try:
+        debug_surf = font.render(f"Scene: {scene}  Player: {int(player.x)},{int(player.y)}  HP:{player.hp}", True, (200,200,200))
+        display.blit(debug_surf, (10, window_res[1]-24))
+    except Exception:
+        pass
 
     # update the full display and cap the frame rate (from settings)
     pygame.display.flip()
